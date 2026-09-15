@@ -3,45 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voiceify - AI Voice Generator</title>
+    <title>Voiceify - AI Character, Animal & Bird Voices</title>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 600px; margin: 30px auto; padding: 20px; background: #f4f7f6; }
-        h1 { color: #333; text-align: center; }
-        textarea { width: 100%; height: 120px; padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 16px; margin-bottom: 15px; box-sizing: border-box; }
-        select, button { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ccc; font-size: 16px; }
-        button { background: #007bff; color: white; font-weight: bold; cursor: pointer; border: none; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 650px; margin: 20px auto; padding: 20px; background: #eef2f5; color: #333; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #007bff; margin-bottom: 5px; }
+        p.subtitle { text-align: center; color: #666; font-size: 14px; margin-bottom: 20px; }
+        label { font-weight: bold; margin-top: 12px; display: block; font-size: 14px; }
+        textarea { width: 100%; height: 120px; padding: 12px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px; margin-top: 5px; box-sizing: border-box; resize: vertical; }
+        select, button { width: 100%; padding: 12px; margin-top: 15px; border-radius: 8px; border: 1px solid #ccc; font-size: 16px; box-sizing: border-box; }
+        button { background: #007bff; color: white; font-weight: bold; border: none; cursor: pointer; transition: 0.3s; }
         button:hover { background: #0056b3; }
-        audio { width: 100%; margin-top: 10px; }
+        .controls { display: flex; gap: 10px; }
+        .controls button { flex: 1; }
+        .btn-stop { background: #dc3545; }
+        .btn-stop:hover { background: #c82333; }
     </style>
 </head>
 <body>
 
+<div class="card">
     <h1>Voiceify 🎙️</h1>
-    <p style="text-align:center;">कथा आणि व्लॉगसाठी मोफत AI आवाज तयार करा</p>
+    <p class="subtitle">कथा, प्राणी आणि पक्षांच्या आवाजात संवाद बनवा</p>
 
-    <textarea id="text" placeholder="येथे तुमची कथा किंवा स्क्रिप्ट टाका..."></textarea>
+    <label for="character">१. कॅरेक्टर, प्राणी किंवा पक्षी निवडा (Select Voice):</label>
+    <select id="character">
+        <optgroup label="लहान मुले व तरुण (Children & Youth)">
+            <option value="mr-IN" data-pitch="1.8" data-rate="1.2">👶 लहान बाळ (Baby Voice)</option>
+            <option value="mr-IN" data-pitch="1.6" data-rate="1.1">👦 लहान मुलगा (Chintu)</option>
+            <option value="mr-IN" data-pitch="1.5" data-rate="1.1">👧 लहान मुलगी (Pari)</option>
+            <option value="mr-IN" data-pitch="1.2" data-rate="1.0">👩 तरुण मुलगी (Young Girl)</option>
+            <option value="mr-IN" data-pitch="1.0" data-rate="1.0">👨 तरुण मुलगा (Young Boy)</option>
+        </optgroup>
+        
+        <optgroup label="वडीलधारी व्यक्ती (Adults & Elders)">
+            <option value="mr-IN" data-pitch="0.8" data-rate="0.95">🧔 काका / मध्यमवयीन (Middle-Aged)</option>
+            <option value="hi-IN" data-pitch="0.65" data-rate="0.85">👵 आजी (Grandmother)</option>
+            <option value="mr-IN" data-pitch="0.6" data-rate="0.8">👴 आजोबा (Grandfather)</option>
+        </optgroup>
 
-    <select id="voice">
-        <option value="mr-IN-AarohiNeural">मराठी (आरोही - Female)</option>
-        <option value="mr-IN-ManoharNeural">मराठी (मनोहर - Male)</option>
-        <option value="hi-IN-SwaraNeural">हिंदी (स्वरा - Female)</option>
-        <option value="hi-IN-MadhurNeural">हिंदी (मधुर - Male)</option>
-        <option value="en-US-JennyNeural">English (Jenny - Female)</option>
+        <optgroup label="हॉरर व फँटसी (Horror & Fantasy)">
+            <option value="hi-IN" data-pitch="0.3" data-rate="0.6">👻 भूत (Ghost Male)</option>
+            <option value="hi-IN" data-pitch="1.9" data-rate="0.7">🧟‍♀️ भूतनी / चेटकीण (Scary Witch)</option>
+            <option value="hi-IN" data-pitch="0.4" data-rate="0.75">🧙‍♂️ जादूगार / व्हिलन (Wizard)</option>
+            <option value="hi-IN" data-pitch="1.7" data-rate="1.2">🤡 कार्टून / जोकर (Funny Voice)</option>
+            <option value="en-US" data-pitch="1.0" data-rate="0.85">🤖 रोबोट (Robot AI)</option>
+        </optgroup>
+
+        <optgroup label="प्राणी (Animals)">
+            <option value="mr-IN" data-pitch="0.2" data-rate="0.7">🦁 सिंह (Roaring Lion)</option>
+            <option value="mr-IN" data-pitch="0.3" data-rate="0.75">🐘 हत्ती (Elephant Voice)</option>
+            <option value="mr-IN" data-pitch="0.4" data-rate="0.8">🐻 अस्वल (Bear Voice)</option>
+            <option value="mr-IN" data-pitch="0.7" data-rate="0.9">🐄 गाय (Cow Voice)</option>
+            <option value="mr-IN" data-pitch="1.1" data-rate="1.2">🦊 कोल्हा (Fox - Clever Voice)</option>
+            <option value="mr-IN" data-pitch="1.3" data-rate="1.3">🐵 माकड (Monkey Voice)</option>
+            <option value="mr-IN" data-pitch="0.9" data-rate="1.4">🐆 चित्ता (Cheetah - Fast Voice)</option>
+            <option value="mr-IN" data-pitch="1.4" data-rate="1.3">🐕 कुत्रा (Dog Dialogue)</option>
+            <option value="mr-IN" data-pitch="1.7" data-rate="1.2">🐈 मांजर (Cat Voice)</option>
+        </optgroup>
+
+        <optgroup label="पक्षी आणि बछडे (Birds & Cubs)">
+            <option value="mr-IN" data-pitch="1.6" data-rate="1.1">🦜 पोपट (Parrot Voice)</option>
+            <option value="mr-IN" data-pitch="1.8" data-rate="1.25">🐦 चिमणी (Sparrow / Small Bird)</option>
+            <option value="mr-IN" data-pitch="1.3" data-rate="1.0">🦚 मोर (Peacock Voice)</option>
+            <option value="mr-IN" data-pitch="1.7" data-rate="1.15">🐾 बछडा / प्राण्यांचे लहान पिल्लू (Cub/Calf)</option>
+        </optgroup>
     </select>
 
-    <button onclick="speakText()">आवाज ऐका (Speak)</button>
+    <label for="text">२. मजकूर किंवा संवाद लिहा (Script):</label>
+    <textarea id="text" placeholder="येथे कथेचा मजकूर किंवा पात्रांचे संवाद लिहा..."></textarea>
 
-    <audio id="audioPlayer" controls style="display:none;"></audio>
+    <div class="controls">
+        <button onclick="speakText()">► आवाज ऐका (Speak)</button>
+        <button class="btn-stop" onclick="stopText()">⏹️ थांबवा (Stop)</button>
+    </div>
+</div>
 
-    <script>
-        function speakText() {
-            const text = document.getElementById('text').value;
-            if(!text) { alert('कृपया आधी काहीतरी स्क्रिप्ट लिहा!'); return; }
-            
-            const utterance = new SpeechSynthesisUtterance(text);
-            window.speechSynthesis.speak(utterance);
+<script>
+    function speakText() {
+        window.speechSynthesis.cancel();
+        
+        const text = document.getElementById('text').value;
+        if(!text.trim()) { 
+            alert('कृपया आधी काहीतरी स्क्रिप्ट लिहा!'); 
+            return; 
         }
-    </script>
+        
+        const characterSelect = document.getElementById('character');
+        const selectedOption = characterSelect.options[characterSelect.selectedIndex];
+        
+        const lang = selectedOption.value;
+        const pitch = parseFloat(selectedOption.getAttribute('data-pitch')) || 1;
+        const rate = parseFloat(selectedOption.getAttribute('data-rate')) || 1;
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = lang;
+        utterance.pitch = pitch;
+        utterance.rate = rate;
+
+        window.speechSynthesis.speak(utterance);
+    }
+
+    function stopText() {
+        window.speechSynthesis.cancel();
+    }
+</script>
 
 </body>
 </html>
+
