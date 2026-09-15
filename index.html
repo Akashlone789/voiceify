@@ -1,94 +1,164 @@
+
 <!DOCTYPE html>
 <html lang="mr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voiceify - AI Character, Animal & Bird Voices</title>
+    <title>Voiceify - AI Smart Auto & Manual Voice Generator</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 650px; margin: 20px auto; padding: 20px; background: #eef2f5; color: #333; }
         .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         h1 { text-align: center; color: #007bff; margin-bottom: 5px; }
         p.subtitle { text-align: center; color: #666; font-size: 14px; margin-bottom: 20px; }
+        
+        /* Tab Navigation */
+        .tab-buttons { display: flex; border-bottom: 2px solid #ddd; margin-bottom: 20px; }
+        .tab-btn { flex: 1; padding: 12px; background: #f1f1f1; border: none; font-weight: bold; font-size: 15px; cursor: pointer; color: #555; border-radius: 8px 8px 0 0; }
+        .tab-btn.active { background: #007bff; color: white; }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
         label { font-weight: bold; margin-top: 12px; display: block; font-size: 14px; }
-        textarea { width: 100%; height: 120px; padding: 12px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px; margin-top: 5px; box-sizing: border-box; resize: vertical; }
+        textarea { width: 100%; height: 130px; padding: 12px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px; margin-top: 5px; box-sizing: border-box; resize: vertical; }
         select, button { width: 100%; padding: 12px; margin-top: 15px; border-radius: 8px; border: 1px solid #ccc; font-size: 16px; box-sizing: border-box; }
-        button { background: #007bff; color: white; font-weight: bold; border: none; cursor: pointer; transition: 0.3s; }
+        button { background: #007bff; color: white; font-weight: bold; border: none; cursor: pointer; transition: 0.3s; border-radius: 8px; }
         button:hover { background: #0056b3; }
+        .btn-auto { background: #6f42c1; }
+        .btn-auto:hover { background: #593196; }
         .controls { display: flex; gap: 10px; }
         .controls button { flex: 1; }
         .btn-stop { background: #dc3545; }
         .btn-stop:hover { background: #c82333; }
+        .btn-download { background: #28a745; margin-top: 15px; display: none; text-align: center; text-decoration: none; color: white; font-weight: bold; padding: 12px; border-radius: 8px; }
+        .btn-download:hover { background: #218838; }
+        #audioPlayer { width: 100%; margin-top: 15px; display: none; }
+        .status-box { margin-top: 10px; font-size: 13px; color: #555; text-align: center; font-style: italic; }
     </style>
 </head>
 <body>
 
 <div class="card">
     <h1>Voiceify 🎙️</h1>
-    <p class="subtitle">कथा, प्राणी आणि पक्षांच्या आवाजात संवाद बनवा</p>
+    <p class="subtitle">AI Voice Maker - Auto Story & Character Mode</p>
 
-    <label for="character">१. कॅरेक्टर, प्राणी किंवा पक्षी निवडा (Select Voice):</label>
-    <select id="character">
-        <optgroup label="लहान मुले व तरुण (Children & Youth)">
-            <option value="mr-IN" data-pitch="1.8" data-rate="1.2">👶 लहान बाळ (Baby Voice)</option>
-            <option value="mr-IN" data-pitch="1.6" data-rate="1.1">👦 लहान मुलगा (Chintu)</option>
-            <option value="mr-IN" data-pitch="1.5" data-rate="1.1">👧 लहान मुलगी (Pari)</option>
-            <option value="mr-IN" data-pitch="1.2" data-rate="1.0">👩 तरुण मुलगी (Young Girl)</option>
-            <option value="mr-IN" data-pitch="1.0" data-rate="1.0">👨 तरुण मुलगा (Young Boy)</option>
-        </optgroup>
-        
-        <optgroup label="वडीलधारी व्यक्ती (Adults & Elders)">
-            <option value="mr-IN" data-pitch="0.8" data-rate="0.95">🧔 काका / मध्यमवयीन (Middle-Aged)</option>
-            <option value="hi-IN" data-pitch="0.65" data-rate="0.85">👵 आजी (Grandmother)</option>
-            <option value="mr-IN" data-pitch="0.6" data-rate="0.8">👴 आजोबा (Grandfather)</option>
-        </optgroup>
+    <!-- Tab Buttons -->
+    <div class="tab-buttons">
+        <button class="tab-btn active" onclick="switchTab('autoTab')">⚡ १. स्मार्ट ऑटो मोड (Auto Story)</button>
+        <button class="tab-btn" onclick="switchTab('manualTab')">🎛️ २. कॅरेक्टर मोड (Single Voice)</button>
+    </div>
 
-        <optgroup label="हॉरर व फँटसी (Horror & Fantasy)">
-            <option value="hi-IN" data-pitch="0.3" data-rate="0.6">👻 भूत (Ghost Male)</option>
-            <option value="hi-IN" data-pitch="1.9" data-rate="0.7">🧟‍♀️ भूतनी / चेटकीण (Scary Witch)</option>
-            <option value="hi-IN" data-pitch="0.4" data-rate="0.75">🧙‍♂️ जादूगार / व्हिलन (Wizard)</option>
-            <option value="hi-IN" data-pitch="1.7" data-rate="1.2">🤡 कार्टून / जोकर (Funny Voice)</option>
-            <option value="en-US" data-pitch="1.0" data-rate="0.85">🤖 रोबोट (Robot AI)</option>
-        </optgroup>
+    <!-- Mode 1: Auto Mode -->
+    <div id="autoTab" class="tab-content active">
+        <label for="autoText">कथा किंवा स्टोरी लिहा (ऑटो कॅरेक्टर ओळखण्यासाठी):</label>
+        <textarea id="autoText" placeholder="उदा. एक लहान मुलगी म्हणाली, मला खेळायला आवडतं. तिथे आजोबा आले आणि म्हणाले, बाळ अभ्यास कर..."></textarea>
+        <button class="btn-auto" onclick="autoDetectAndSpeak()">⚡ पूर्ण कथा ऑटो-व्हॉईससह ऐका</button>
+    </div>
 
-        <optgroup label="प्राणी (Animals)">
-            <option value="mr-IN" data-pitch="0.2" data-rate="0.7">🦁 सिंह (Roaring Lion)</option>
-            <option value="mr-IN" data-pitch="0.3" data-rate="0.75">🐘 हत्ती (Elephant Voice)</option>
-            <option value="mr-IN" data-pitch="0.4" data-rate="0.8">🐻 अस्वल (Bear Voice)</option>
-            <option value="mr-IN" data-pitch="0.7" data-rate="0.9">🐄 गाय (Cow Voice)</option>
-            <option value="mr-IN" data-pitch="1.1" data-rate="1.2">🦊 कोल्हा (Fox - Clever Voice)</option>
-            <option value="mr-IN" data-pitch="1.3" data-rate="1.3">🐵 माकड (Monkey Voice)</option>
-            <option value="mr-IN" data-pitch="0.9" data-rate="1.4">🐆 चित्ता (Cheetah - Fast Voice)</option>
-            <option value="mr-IN" data-pitch="1.4" data-rate="1.3">🐕 कुत्रा (Dog Dialogue)</option>
-            <option value="mr-IN" data-pitch="1.7" data-rate="1.2">🐈 मांजर (Cat Voice)</option>
-        </optgroup>
+    <!-- Mode 2: Manual Select Mode -->
+    <div id="manualTab" class="tab-content">
+        <label for="character">कॅरेक्टर, प्राणी किंवा पक्षी निवडा:</label>
+        <select id="character">
+            <optgroup label="लहान मुले व तरुण (Children & Youth)">
+                <option value="mr-IN" data-pitch="1.8" data-rate="1.2">👶 लहान बाळ (Baby Voice)</option>
+                <option value="mr-IN" data-pitch="1.6" data-rate="1.1">👦 लहान मुलगा (Chintu)</option>
+                <option value="mr-IN" data-pitch="1.5" data-rate="1.1">👧 लहान मुलगी (Pari)</option>
+                <option value="mr-IN" data-pitch="1.2" data-rate="1.0">👩 तरुण मुलगी (Young Girl)</option>
+                <option value="mr-IN" data-pitch="1.0" data-rate="1.0">👨 तरुण मुलगा (Young Boy)</option>
+            </optgroup>
+            
+            <optgroup label="वडीलधारी व्यक्ती (Adults & Elders)">
+                <option value="mr-IN" data-pitch="0.8" data-rate="0.95">🧔 काका / मध्यमवयीन</option>
+                <option value="hi-IN" data-pitch="0.65" data-rate="0.85">👵 आजी (Grandmother)</option>
+                <option value="mr-IN" data-pitch="0.6" data-rate="0.8">👴 आजोबा (Grandfather)</option>
+            </optgroup>
 
-        <optgroup label="पक्षी आणि बछडे (Birds & Cubs)">
-            <option value="mr-IN" data-pitch="1.6" data-rate="1.1">🦜 पोपट (Parrot Voice)</option>
-            <option value="mr-IN" data-pitch="1.8" data-rate="1.25">🐦 चिमणी (Sparrow / Small Bird)</option>
-            <option value="mr-IN" data-pitch="1.3" data-rate="1.0">🦚 मोर (Peacock Voice)</option>
-            <option value="mr-IN" data-pitch="1.7" data-rate="1.15">🐾 बछडा / प्राण्यांचे लहान पिल्लू (Cub/Calf)</option>
-        </optgroup>
-    </select>
+            <optgroup label="हॉरर व फँटसी (Horror & Fantasy)">
+                <option value="hi-IN" data-pitch="0.3" data-rate="0.6">👻 भूत (Ghost Male)</option>
+                <option value="hi-IN" data-pitch="1.9" data-rate="0.7">🧟‍♀️ भूतनी / चेटकीण (Scary Witch)</option>
+                <option value="hi-IN" data-pitch="0.4" data-rate="0.75">🧙‍♂️ जादूगार / व्हिलन (Wizard)</option>
+                <option value="hi-IN" data-pitch="1.7" data-rate="1.2">🤡 कार्टून / जोकर</option>
+                <option value="en-US" data-pitch="1.0" data-rate="0.85">🤖 रोबोट (Robot AI)</option>
+            </optgroup>
 
-    <label for="text">२. मजकूर किंवा संवाद लिहा (Script):</label>
-    <textarea id="text" placeholder="येथे कथेचा मजकूर किंवा पात्रांचे संवाद लिहा..."></textarea>
+            <optgroup label="प्राणी व पक्षी (Animals & Birds)">
+                <option value="mr-IN" data-pitch="0.2" data-rate="0.7">🦁 सिंह (Roaring Lion)</option>
+                <option value="mr-IN" data-pitch="0.3" data-rate="0.75">🐘 हत्ती (Elephant Voice)</option>
+                <option value="mr-IN" data-pitch="1.1" data-rate="1.2">🦊 कोल्हा (Fox Voice)</option>
+                <option value="mr-IN" data-pitch="1.3" data-rate="1.3">🐵 माकड (Monkey Voice)</option>
+                <option value="mr-IN" data-pitch="1.4" data-rate="1.3">🐕 कुत्रा (Dog Dialogue)</option>
+                <option value="mr-IN" data-pitch="1.7" data-rate="1.2">🐈 मांजर (Cat Voice)</option>
+                <option value="mr-IN" data-pitch="1.6" data-rate="1.1">🦜 पोपट (Parrot Voice)</option>
+            </optgroup>
+        </select>
 
+        <label for="manualText">संवाद किंवा मजकूर लिहा:</label>
+        <textarea id="manualText" placeholder="निवडलेल्या पात्राचे संवाद येथे लिहा..."></textarea>
+        <button onclick="speakManual()">► सिलेक्ट केलेला आवाज ऐका</button>
+    </div>
+
+    <!-- Common Controls & Downloads -->
     <div class="controls">
-        <button onclick="speakText()">► आवाज ऐका (Speak)</button>
         <button class="btn-stop" onclick="stopText()">⏹️ थांबवा (Stop)</button>
     </div>
+
+    <div id="status" class="status-box"></div>
+
+    <audio id="audioPlayer" controls></audio>
+    <a id="downloadBtn" class="btn-download" download="voiceify-audio.mp3">⬇️ MP3 Audio Download करा</a>
 </div>
 
 <script>
-    function speakText() {
+    function switchTab(tabId) {
+        stopText();
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+        document.getElementById(tabId).classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    // Auto Story Mode Function
+    function autoDetectAndSpeak() {
         window.speechSynthesis.cancel();
-        
-        const text = document.getElementById('text').value;
-        if(!text.trim()) { 
-            alert('कृपया आधी काहीतरी स्क्रिप्ट लिहा!'); 
-            return; 
-        }
-        
+        const text = document.getElementById('autoText').value;
+        if(!text.trim()) { alert('कृपया आधी कथा लिहा!'); return; }
+
+        document.getElementById('status').innerText = 'स्मार्ट ऑटोमेशन चालू आहे... पात्रांनुसार आवाज बदलत आहे.';
+
+        const sentences = text.split(/(?<=[.?!।\n])/);
+        sentences.forEach((sentence) => {
+            if(sentence.trim() !== "") {
+                const utterance = new SpeechSynthesisUtterance(sentence);
+                utterance.lang = 'mr-IN';
+                const lowerText = sentence.toLowerCase();
+
+                if (lowerText.includes('मुलगी') || lowerText.includes('परी') || lowerText.includes('स्त्री')) {
+                    utterance.pitch = 1.5; utterance.rate = 1.1;
+                } else if (lowerText.includes('मुलगा') || lowerText.includes('चिंटू') || lowerText.includes('बाळ')) {
+                    utterance.pitch = 1.6; utterance.rate = 1.15;
+                } else if (lowerText.includes('आजोबा') || lowerText.includes('वृद्ध')) {
+                    utterance.pitch = 0.6; utterance.rate = 0.85;
+                } else if (lowerText.includes('आजी')) {
+                    utterance.pitch = 0.65; utterance.lang = 'hi-IN';
+                } else if (lowerText.includes('सिंह') || lowerText.includes('भूत')) {
+                    utterance.pitch = 0.3;
+                } else {
+                    utterance.pitch = 1.0; utterance.rate = 1.0;
+                }
+                window.speechSynthesis.speak(utterance);
+            }
+        });
+
+        generateDownloadLink(text, 'mr');
+    }
+
+    // Manual Character Mode Function
+    function speakManual() {
+        window.speechSynthesis.cancel();
+        const text = document.getElementById('manualText').value;
+        if(!text.trim()) { alert('कृपया आधी काहीतरी संवाद लिहा!'); return; }
+
         const characterSelect = document.getElementById('character');
         const selectedOption = characterSelect.options[characterSelect.selectedIndex];
         
@@ -102,13 +172,30 @@
         utterance.rate = rate;
 
         window.speechSynthesis.speak(utterance);
+        generateDownloadLink(text, lang.split('-')[0]);
+    }
+
+    // MP3 Generator Function
+    function generateDownloadLink(text, lang) {
+        const encodedText = encodeURIComponent(text);
+        const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodedText}&tl=${lang}&client=tw-ob`;
+
+        const audioPlayer = document.getElementById('audioPlayer');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        audioPlayer.src = audioUrl;
+        audioPlayer.style.display = 'block';
+
+        downloadBtn.href = audioUrl;
+        downloadBtn.target = '_blank';
+        downloadBtn.style.display = 'block';
     }
 
     function stopText() {
         window.speechSynthesis.cancel();
+        document.getElementById('status').innerText = 'आवाज थांबवला आहे.';
     }
 </script>
 
 </body>
 </html>
-
